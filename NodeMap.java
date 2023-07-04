@@ -6,6 +6,7 @@ import java.security.InvalidParameterException;
 public class NodeMap {
     Integer width;
     Integer height;
+    private boolean wallsAreSet; 
     public static void main(String[] args) {
     
     }
@@ -16,11 +17,26 @@ public class NodeMap {
         }
         this.height = height;
         this.width = width;
+        this.wallsAreSet = false;
 
 
     }
-    private void declareContent(){
-        
+
+    public void set_walls(){
+
+    }
+    private void contentDeclare()
+    {
+
     }
 
+    private void contentColorize()
+    {
+
+    }
+
+    private void contentBind()
+    {
+
+    }
 }
