@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 /**
  * NodeCell
  */
@@ -8,11 +10,14 @@ public class NodeCell {
     public NodeCell B_NC;
     public NodeCell U_NC;
     public EColor color;
-
+    private Long createdate;
+    public boolean validpath;
 
     public static void main(String[] args) {
         
         NodeCell a = new NodeCell(1);
+        NodeCell b = new NodeCell(2);
+        NodeCell c = a;
         a.color = EColor.WHITE;
         System.out.println(a);
         a.color = EColor.BLUE;
@@ -21,6 +26,8 @@ public class NodeCell {
         System.out.println(a);
         a.color = EColor.RED;
         System.out.println(a);
+        System.out.println(a.equals(b));
+        System.out.println(a.equals(c));
     }
     
 
@@ -32,6 +39,17 @@ public class NodeCell {
         this.U_NC = null;
         this.B_NC = null;
         this.color = EColor.WHITE;
+        this.createdate =  System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean equals( Object obj){
+        if  (!(obj instanceof NodeCell)){
+            return false;
+        }
+        NodeCell obj_ = (NodeCell) obj;
+        return (obj_.createdate == this.createdate) && (obj_.color == this.color)
+            && (obj_.value == this.value) ? true: false;
     }
 
 
