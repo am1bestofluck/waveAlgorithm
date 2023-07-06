@@ -15,7 +15,7 @@ public class NodeCell {
     public boolean validpath;
 
     public static void main(String[] args) {
-        
+
         NodeCell a = new NodeCell(1);
         NodeCell b = new NodeCell(2);
         NodeCell c = a;
@@ -30,29 +30,26 @@ public class NodeCell {
         System.out.println(a.equals(b));
         System.out.println(a.equals(c));
     }
-    
 
-
-    public NodeCell(Integer value){
+    public NodeCell(Integer value) {
         this.value = value;
         this.L_NC = null;
         this.R_NC = null;
         this.U_NC = null;
         this.B_NC = null;
         this.color = EColor.WHITE;
-        this.createdate =  System.currentTimeMillis();
+        this.createdate = System.currentTimeMillis();
     }
 
     @Override
-    public boolean equals( Object obj){
-        if  (!(obj instanceof NodeCell)){
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NodeCell)) {
             return false;
         }
         NodeCell obj_ = (NodeCell) obj;
         return (obj_.createdate == this.createdate) && (obj_.color == this.color)
-            && (obj_.value == this.value) ? true: false;
+                && (obj_.value == this.value) ? true : false;
     }
-
 
     @Override
     public String toString() {
@@ -71,24 +68,24 @@ public class NodeCell {
                 flavor = "\u001B[32m";
                 break;
         }
-        if (flavor == null){
+        if (flavor == null) {
             throw new IllegalArgumentException("Ты где, заюша, нашел такой цвет?");
-        } 
-        return flavor +"NC:" + value;
+        }
+        return flavor + "NC:" + String.format("%" + (-3) + "s", value);// эта строчка магическая... джава перекрати.
     }
-    
-    public NodeCell[] getNeighboors(){
+
+    public NodeCell[] getNeighboors() {
         ArrayList<NodeCell> tmp = new ArrayList<NodeCell>();
-        if (this.B_NC!= null){
+        if (this.B_NC != null) {
             tmp.add(this.B_NC);
         }
-        if (this.U_NC!= null){
+        if (this.U_NC != null) {
             tmp.add(this.U_NC);
         }
-        if (this.R_NC!= null){
+        if (this.R_NC != null) {
             tmp.add(this.R_NC);
         }
-        if (this.L_NC!= null){
+        if (this.L_NC != null) {
             tmp.add(this.L_NC);
         }
         NodeCell[] out = new NodeCell[tmp.size()];
@@ -98,5 +95,5 @@ public class NodeCell {
         return out;
 
     }
-    
+
 }

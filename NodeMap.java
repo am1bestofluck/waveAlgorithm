@@ -104,7 +104,6 @@ public class NodeMap {
         setWalls();
         setRouteLimits();
         setGrid();
-        contentColorize();
 
     }
 
@@ -150,41 +149,54 @@ public class NodeMap {
 
     private boolean calculatePath() {
         boolean out = false;
-        ArrayList< NodeCell> currentRow = new ArrayList<>();
+        ArrayList<NodeCell> currentRow = new ArrayList<>();
         currentRow.add(this.start);
         Integer marker = this.const_blank;
-        ArrayList< NodeCell> nextRow = new ArrayList<>();
-        while (currentRow.size() != 0){
-            marker ++;
+        ArrayList<NodeCell> nextRow = new ArrayList<>();
+        while (currentRow.size() != 0) {
+            marker++;
             for (NodeCell nodeCell_current : currentRow) {
-                
+
                 nodeCell_current.value = marker;
                 for (NodeCell nodeCell_next : nodeCell_current.getNeighboors()) {
-                    if (nodeCell_next.value == this.const_blank){
+                    if (nodeCell_next.value == this.const_blank) {
                         nextRow.add(nodeCell_next);
-                    }
-                    else if (nodeCell_next.value == this.const_end ){
+                    } else if (nodeCell_next.value == this.const_end) {
+                        nodeCell_next.value = marker + 1;
                         out = true;
+                        this.drawPath();
                         return out;
                     }
                 }
-                    
-                }
-                currentRow = nextRow;
-                nextRow = new ArrayList<>();
-            }
-        return out;    
-    }
-        
 
-    private void contentColorize() {
-        for (int i = 0; i < this.height; i++) {
-            for (int j = 0; j < this.width; j++) {
-                if (this.body[i][j].validpath) {
-                    this.body[i][j].color = EColor.BLUE;
-                }
             }
+            currentRow = nextRow;
+            nextRow = new ArrayList<>();
         }
+
+        return out;
+    }
+
+    private void drawPath() {
+        NodeCell temp = this.finish;
+        while (temp != this.start) {
+            for (NodeCell walkBack : temp.getNeighboors()) {
+                if (walkBack.value == temp.value - 1) {
+                    walkBack.color = EColor.BLUE;
+                    temp = walkBack;
+                    break;
+                }
+
+            }
+            this.start.color = EColor.GREEN;
+        }
+        // for (int i = 0; i < this.height; i++) {
+        // for (int j = 0; j < this.width; j++) {
+        // if (this.body[i][j].validpath) {
+        // this.body[i][j].color = EColor.BLUE;
+        // }
+        // }
+        // }
     }
 
     private void setGrid() {
