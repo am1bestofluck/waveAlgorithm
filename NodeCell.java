@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -76,6 +77,26 @@ public class NodeCell {
         return flavor +"NC:" + value;
     }
     
+    public NodeCell[] getNeighboors(){
+        ArrayList<NodeCell> tmp = new ArrayList<NodeCell>();
+        if (this.B_NC!= null){
+            tmp.add(this.B_NC);
+        }
+        if (this.U_NC!= null){
+            tmp.add(this.U_NC);
+        }
+        if (this.R_NC!= null){
+            tmp.add(this.R_NC);
+        }
+        if (this.L_NC!= null){
+            tmp.add(this.L_NC);
+        }
+        NodeCell[] out = new NodeCell[tmp.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = tmp.get(i);
+        }
+        return out;
 
+    }
     
 }

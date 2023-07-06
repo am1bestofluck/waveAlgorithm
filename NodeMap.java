@@ -1,4 +1,5 @@
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -20,9 +21,30 @@ public class NodeMap {
     NodeCell finish;
 
     public static void main(String[] args) {
-        NodeMap test = new NodeMap(10, 10);
+        Scanner main_scanner = new Scanner(System.in);
+
+        Integer side = null;
+        while (side == null) {
+            try {
+                System.out.println("Set side for square map? side >= 2 ...");
+                side = main_scanner.nextInt();
+                if (side <= 2) {
+                    side = null;
+                    throw new InvalidParameterException("Сторону больше трёх пож :( :)");
+
+                }
+            }
+
+            catch (InputMismatchException e) {
+                System.out.println("try int.");
+            } catch (InvalidParameterException e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+        }
+        NodeMap test = new NodeMap(side, side);
         boolean result = test.calculatePath();
         if (result) {
+            System.out.println("Complete!");
             test.Show();
         } else {
             System.out.println("Finish unreachable");
@@ -72,11 +94,7 @@ public class NodeMap {
 
     public NodeMap(Integer width, Integer height) throws InvalidParameterException {
         /* в конструкторе проставляем точки входа-выхода, стены */
-        if ((width == null || width <= 2) || (height == null || height <= 0)) {
-            throw new InvalidParameterException("Я всё понимаю, но описывать сетку для"
-                    + " одной ячейки/ одного столбца / одной строки"
-                    + " мне как-то лениво :(");
-        }
+
         this.height = height;
         this.width = width;
         this.wallsAreSet = false;
@@ -113,7 +131,6 @@ public class NodeMap {
         System.out.println("\n###\nDeclare start and end points of path");
         this.start = getPoint("start point");
         this.start.color = EColor.GREEN;
-        this.start.value = this.const_start;
         this.finish = getPoint("end point");
         this.finish.color = EColor.GREEN;
         this.finish.value = this.const_end;
@@ -132,8 +149,33 @@ public class NodeMap {
     }
 
     private boolean calculatePath() {
-        return true;
+        boolean out = false;
+        ArrayList< NodeCell> currentRow = new ArrayList<>();
+        currentRow.add(this.start);
+        Integer marker = this.const_blank;
+        ArrayList< NodeCell> nextRow = new ArrayList<>();
+        while (currentRow.size() != 0){
+            marker ++;
+            for (NodeCell nodeCell_current : currentRow) {
+                
+                nodeCell_current.value = marker;
+                for (NodeCell nodeCell_next : nodeCell_current.getNeighboors()) {
+                    if (nodeCell_next.value == this.const_blank){
+                        nextRow.add(nodeCell_next);
+                    }
+                    else if (nodeCell_next.value == this.const_end ){
+                        out = true;
+                        return out;
+                    }
+                }
+                    
+                }
+                currentRow = nextRow;
+                nextRow = new ArrayList<>();
+            }
+        return out;    
     }
+        
 
     private void contentColorize() {
         for (int i = 0; i < this.height; i++) {
@@ -200,44 +242,80 @@ public class NodeMap {
 
         // #region нижний край
         for (int i = 1; i < this.width - 1; i++) {
-            if (this.body[this.height-2][i].value != this.const_wall) {
-                this.body[this.height-2][i].U_NC = this.body[this.height-3][i].value != this.const_wall ? this.body[this.height-3][i] : null;
-                this.body[this.height-2][i].L_NC = this.body[this.height-2][i-1].value != this.const_wall ? this.body[this.height-2][i-1] : null;
-                this.body[this.height-2][i].R_NC = this.body[this.height-2][i+1].value != this.const_wall ? this.body[this.height-2][i+1] : null;
+            if (this.body[this.height - 2][i].value != this.const_wall) {
+                this.body[this.height - 2][i].U_NC = this.body[this.height - 3][i].value != this.const_wall
+                        ? this.body[this.height - 3][i]
+                        : null;
+                this.body[this.height - 2][i].L_NC = this.body[this.height - 2][i - 1].value != this.const_wall
+                        ? this.body[this.height - 2][i - 1]
+                        : null;
+                this.body[this.height - 2][i].R_NC = this.body[this.height - 2][i + 1].value != this.const_wall
+                        ? this.body[this.height - 2][i + 1]
+                        : null;
             }
 
         }
         // #endregion нижний край
 
         // #region левый край
-        for (int i = 1; i < this.height-1; i++) {
+        for (int i = 1; i < this.height - 2; i++) {
             if (this.body[i][0].value != this.const_wall) {
-                this.body[i][0].U_NC = this.body[i-1][0].value != this.const_wall ? this.body[i-1][0]:null;
-                this.body[i][0].B_NC = this.body[i+1][0].value != this.const_wall ? this.body[i+1][0]:null;
-                this.body[i][0].R_NC = this.body[i][1].value != this.const_wall ? this.body[i][1]:null;
+                this.body[i][0].U_NC = this.body[i - 1][0].value != this.const_wall ? this.body[i - 1][0] : null;
+                this.body[i][0].B_NC = this.body[i + 1][0].value != this.const_wall ? this.body[i + 1][0] : null;
+                this.body[i][0].R_NC = this.body[i][1].value != this.const_wall ? this.body[i][1] : null;
             }
         }
-    
+
         // #endregion левый край
 
         // #region правый край
-        for (int i = 1; i < this.height-1; i++) {
-            if (this.body[i][this.width-1].value != this.const_wall) {
-                this.body[i][this.width-1].U_NC = this.body[i-1][this.width-1].value != this.const_wall ? this.body[i-1][this.width-1]:null;
-                this.body[i][this.width-1].B_NC = this.body[i+1][this.width-1].value != this.const_wall ? this.body[i+1][this.width-1]:null;
-                this.body[i][this.width-1].L_NC = this.body[i][this.width-2].value != this.const_wall ? this.body[i][this.width-2]:null;
+        for (int i = 1; i < this.height - 1; i++) {
+            if (this.body[i][this.width - 1].value != this.const_wall) {
+                this.body[i][this.width - 1].U_NC = this.body[i - 1][this.width - 1].value != this.const_wall
+                        ? this.body[i - 1][this.width - 1]
+                        : null;
+                this.body[i][this.width - 1].B_NC = this.body[i + 1][this.width - 1].value != this.const_wall
+                        ? this.body[i + 1][this.width - 1]
+                        : null;
+                this.body[i][this.width - 1].L_NC = this.body[i][this.width - 2].value != this.const_wall
+                        ? this.body[i][this.width - 2]
+                        : null;
             }
         }
         // #endregion правый край
-        //#region мид
-        for (int i = 0; i < body.length; i++) {
-            for (int j = 0; j < body.length; j++) {
-                
+        // #region мид
+        for (int i = 1; i < this.height - 1; i++) {
+            for (int j = 1; j < this.width - 1; j++) {
+                if (this.body[i][j].value != this.const_wall) {
+                    this.body[i][j].U_NC = this.body[i - 1][j].value != this.const_wall ? this.body[i - 1][j] : null;
+                    this.body[i][j].B_NC = this.body[i + 1][j].value != this.const_wall ? this.body[i + 1][j] : null;
+                    this.body[i][j].L_NC = this.body[i][j - 1].value != this.const_wall ? this.body[i][j - 1] : null;
+                    this.body[i][j].R_NC = this.body[i][j + 1].value != this.const_wall ? this.body[i][j + 1] : null;
+                }
+
             }
         }
-        //#endregion мид
-        NodeCell temp = this.body[0][0];
-        System.out.println("debug");
+        // #endregion мид
+        // #region тест
+        boolean debug = false;
+        if (debug) {
+            NodeCell c1 = this.body[0][0];
+            NodeCell c2 = this.body[this.height - 1][this.width - 1];
+            NodeCell mid1 = this.body[1][1];
+            NodeCell mid2 = this.body[2][3];
+            NodeCell lw1 = this.body[1][0];
+            NodeCell lw2 = this.body[2][0];
+            NodeCell uw1 = this.body[0][1];
+            NodeCell uw2 = this.body[0][3];
+            NodeCell rw1 = this.body[1][this.width - 1];
+            NodeCell rw2 = this.body[2][this.width - 1];
+            NodeCell bw1 = this.body[this.height - 1][2];
+            NodeCell bw2 = this.body[this.height - 1][3];
+
+            NodeCell[] tmp = c1.getNeighboors();
+            System.out.println("debug");
+        }
+        // #endregion тест
 
     }
 
